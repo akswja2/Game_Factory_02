@@ -57,13 +57,14 @@ function moveRope() {
     if (ropeAngle >= 360) ropeAngle = 0;
     
     const radians = ropeAngle * Math.PI / 180;
-    const amplitude = 100;
+    const amplitude = 150;
     const y = amplitude * Math.abs(Math.sin(radians));
     
-    const path = `M0,200 Q150,${200 - y * 2} 300,200`;
+    const path = `M0,400 Q150,${400 - y} 300,400`;
     ropePath.setAttribute('d', path);
 
-    checkCollision(y);
+    checkCollision(400 - y);
+    console.log('Rope path:', path);  // 디버깅용 로그 추가
 }
 
 function checkCollision(ropeHeight) {
@@ -102,6 +103,7 @@ function updateSpeedDisplay() {
 }
 
 function startGame() {
+    console.log('Game started');
     score = 0;
     jumpCount = 0;
     baseSpeed = 3;
@@ -110,6 +112,10 @@ function startGame() {
     updateSpeedDisplay();
     jumpHeightValue.textContent = '0';
     startButton.disabled = true;
+    
+    // 로프 초기화
+    moveRope();
+    
     gameInterval = setInterval(moveRope, 20);
     document.addEventListener('keydown', handleKeyPress);
 }
@@ -132,10 +138,12 @@ startButton.addEventListener('click', startGame);
 // 페이지 로드 시 강아지 이미지 위치 초기화
 window.addEventListener('load', () => {
     playerContainer.style.bottom = '0px';
+    console.log('Page loaded');
 });
 
 // 디버깅을 위한 콘솔 로그 추가
 console.log('Script loaded');
 
+// 이미지 로딩 확인
 player.onload = () => console.log('Image loaded successfully');
 player.onerror = () => console.log('Error loading image');
