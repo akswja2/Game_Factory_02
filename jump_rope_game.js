@@ -133,3 +133,9 @@ startButton.addEventListener('click', startGame);
 window.addEventListener('load', () => {
     playerContainer.style.bottom = '0px';
 });
+
+// 디버깅을 위한 콘솔 로그 추가
+console.log('Script loaded');
+
+player.onload = () => console.log('Image loaded successfully');
+player.onerror = () => console.log('Error loading image');
