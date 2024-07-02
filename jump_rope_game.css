@@ -1,42 +1,58 @@
-const playerContainer = document.getElementById('player-container');
-const player = document.getElementById('player');
-// ... (기존 코드 유지)
-
-function jump() {
-    if (!isJumping) {
-        isJumping = true;
-        let jumpHeight = 0;
-        const jumpInterval = setInterval(() => {
-            if (jumpHeight < MAX_JUMP_HEIGHT) {
-                jumpHeight += 5;
-                playerContainer.style.bottom = jumpHeight + 'px';
-                currentJumpHeight = jumpHeight;
-                jumpHeightValue.textContent = currentJumpHeight;
-                
-                // 점프 시작 시 회전 애니메이션 추가
-                if (jumpHeight === 5) {
-                    player.classList.add('jumping');
-                }
-            } else {
-                clearInterval(jumpInterval);
-                const fallInterval = setInterval(() => {
-                    if (jumpHeight > 0) {
-                        jumpHeight -= 5;
-                        playerContainer.style.bottom = jumpHeight + 'px';
-                        currentJumpHeight = jumpHeight;
-                        jumpHeightValue.textContent = currentJumpHeight;
-                    } else {
-                        clearInterval(fallInterval);
-                        isJumping = false;
-                        currentJumpHeight = 0;
-                        jumpHeightValue.textContent = currentJumpHeight;
-                        // 점프 종료 시 회전 애니메이션 제거
-                        player.classList.remove('jumping');
-                    }
-                }, 20);
-            }
-        }, 20);
-    }
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
 }
 
-// ... (나머지 코드 유지)
+#game-container {
+    text-align: center;
+}
+
+#game-area {
+    width: 300px;
+    height: 400px;
+    background-color: #fff;
+    border: 2px solid #000;
+    position: relative;
+    overflow: hidden;
+}
+
+#player-container {
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    bottom: 0;
+    left: 100px;
+    transition: bottom 0.5s;
+}
+
+#player {
+    width: 100%;
+    height: 100%;
+}
+
+#rope {
+    width: 300px;
+    height: 200px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+#score, #speed, #jump-height {
+    font-size: 24px;
+    margin-top: 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.jumping {
+    animation: spin 0.5s linear;
+}
