@@ -8,8 +8,6 @@ body {
     background-color: #f0f0f0;
 }
 
-
-
 #game-container {
     text-align: center;
 }
@@ -24,18 +22,18 @@ body {
 }
 
 #player-container {
-    width: 80px;  /* 플레이어 컨테이너 크기 조정 */
-    height: 80px; /* 플레이어 컨테이너 크기 조정 */
+    width: 80px;
+    height: 80px;
     position: absolute;
-    bottom: 0;
-    left: 110px; /* 중앙 정렬을 위해 위치 조정 */
+    bottom: 0;  /* 이 부분을 수정했습니다. */
+    left: 110px;
     transition: bottom 0.5s;
 }
 
 #player {
     width: 100%;
     height: 100%;
-    object-fit: contain; /* 이미지 비율 유지 */
+    object-fit: contain;
 }
 
 #rope {
@@ -58,27 +56,4 @@ body {
 
 .jumping {
     animation: spin 0.5s linear;
-}
-function checkCollision(ropeHeight) {
-    const playerBottom = parseInt(playerContainer.style.bottom || '0');
-    const playerHeight = playerContainer.offsetHeight;
-
-    if (ropeHeight <= 5 && playerBottom < 5) {
-        endGame();
-    } else if (ropeHeight <= playerHeight && playerBottom >= ropeHeight - 5) {
-        score++;
-        jumpCount++;
-        scoreValue.textContent = score;
-        
-        if (jumpCount % 3 === 0) {
-            randomizeSpeed();
-        }
-        
-        if (jumpCount % 5 === 0) {
-            baseSpeed++;
-            currentSpeed = baseSpeed;
-        }
-        
-        updateSpeedDisplay();
-    }
 }
