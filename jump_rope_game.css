@@ -8,6 +8,30 @@ body {
     background-color: #f0f0f0;
 }
 
+function checkCollision(ropeHeight) {
+    const playerBottom = parseInt(playerContainer.style.bottom || '0');
+    const playerHeight = playerContainer.offsetHeight;
+
+    if (ropeHeight <= 5 && playerBottom < 5) {
+        endGame();
+    } else if (ropeHeight <= playerHeight && playerBottom >= ropeHeight - 5) {
+        score++;
+        jumpCount++;
+        scoreValue.textContent = score;
+        
+        if (jumpCount % 3 === 0) {
+            randomizeSpeed();
+        }
+        
+        if (jumpCount % 5 === 0) {
+            baseSpeed++;
+            currentSpeed = baseSpeed;
+        }
+        
+        updateSpeedDisplay();
+    }
+}
+
 #game-container {
     text-align: center;
 }
