@@ -68,10 +68,11 @@ function moveRope() {
 
 function checkCollision(ropeHeight) {
     const playerBottom = parseInt(playerContainer.style.bottom || '0');
+    const playerHeight = playerContainer.offsetHeight;
 
     if (ropeHeight <= 5 && playerBottom < 5) {
         endGame();
-    } else if (ropeHeight <= 5 && playerBottom >= 5) {
+    } else if (ropeHeight <= playerHeight && playerBottom >= ropeHeight - 5) {
         score++;
         jumpCount++;
         scoreValue.textContent = score;
@@ -127,3 +128,8 @@ function handleKeyPress(e) {
 }
 
 startButton.addEventListener('click', startGame);
+
+// 페이지 로드 시 강아지 이미지 위치 초기화
+window.addEventListener('load', () => {
+    playerContainer.style.bottom = '0px';
+});
