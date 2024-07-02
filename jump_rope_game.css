@@ -28,6 +28,7 @@ body {
     bottom: 0;
     left: 110px;
     transition: bottom 0.5s;
+    z-index: 2; /* 플레이어를 로프 위에 표시 */
 }
 
 #player {
@@ -42,6 +43,7 @@ body {
     position: absolute;
     top: 0;
     left: 0;
+    z-index: 1; /* 로프를 플레이어 아래에 표시 */
 }
 
 #score, #speed, #jump-height {
