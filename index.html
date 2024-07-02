@@ -25,13 +25,17 @@
             position: relative;
             overflow: hidden;
         }
-        #player {
+        #player-container {
             width: 100px;
             height: 100px;
             position: absolute;
             bottom: 0;
             left: 100px;
-            transition: bottom 0.2s;
+            transition: bottom 0.5s;
+        }
+        #player {
+            width: 100%;
+            height: 100%;
         }
         #rope {
             width: 300px;
@@ -44,12 +48,21 @@
             font-size: 24px;
             margin-top: 20px;
         }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .jumping {
+            animation: spin 0.5s linear;
+        }
     </style>
 </head>
 <body>
     <div id="game-container">
         <div id="game-area">
-            <img id="player" src="apple_dog.png" alt="강아지 플레이어">
+            <div id="player-container">
+                <img id="player" src="dog.png" alt="강아지 플레이어">
+            </div>
             <svg id="rope" viewBox="0 0 300 200">
                 <path id="rope-path" fill="none" stroke="red" stroke-width="2"/>
             </svg>
@@ -61,6 +74,7 @@
     </div>
 
     <script>
+        const playerContainer = document.getElementById('player-container');
         const player = document.getElementById('player');
         const ropePath = document.getElementById('rope-path');
         const scoreValue = document.getElementById('score-value');
@@ -86,15 +100,20 @@
                 const jumpInterval = setInterval(() => {
                     if (jumpHeight < MAX_JUMP_HEIGHT) {
                         jumpHeight += 5;
-                        player.style.bottom = jumpHeight + 'px';
+                        playerContainer.style.bottom = jumpHeight + 'px';
                         currentJumpHeight = jumpHeight;
                         jumpHeightValue.textContent = currentJumpHeight;
+                        
+                        // 점프 시작 시 회전 애니메이션 추가
+                        if (jumpHeight === 5) {
+                            player.classList.add('jumping');
+                        }
                     } else {
                         clearInterval(jumpInterval);
                         const fallInterval = setInterval(() => {
                             if (jumpHeight > 0) {
                                 jumpHeight -= 5;
-                                player.style.bottom = jumpHeight + 'px';
+                                playerContainer.style.bottom = jumpHeight + 'px';
                                 currentJumpHeight = jumpHeight;
                                 jumpHeightValue.textContent = currentJumpHeight;
                             } else {
@@ -102,6 +121,8 @@
                                 isJumping = false;
                                 currentJumpHeight = 0;
                                 jumpHeightValue.textContent = currentJumpHeight;
+                                // 점프 종료 시 회전 애니메이션 제거
+                                player.classList.remove('jumping');
                             }
                         }, 20);
                     }
@@ -124,7 +145,7 @@
         }
 
         function checkCollision(ropeHeight) {
-            const playerBottom = parseInt(player.style.bottom || '0');
+            const playerBottom = parseInt(playerContainer.style.bottom || '0');
 
             if (ropeHeight <= 5 && playerBottom < 5) {
                 endGame();
