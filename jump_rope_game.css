@@ -1,0 +1,8 @@
+#player {
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    bottom: 0;
+    left: 100px;
+    transition: bottom 0.2s;
+}

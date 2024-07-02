@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>줄넘기 게임</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        #game-container {
+            text-align: center;
+        }
+        #game-area {
+            width: 300px;
+            height: 400px;
+            background-color: #fff;
+            border: 2px solid #000;
+            position: relative;
+            overflow: hidden;
+        }
+        #player {
+            width: 100px;
+            height: 100px;
+            position: absolute;
+            bottom: 0;
+            left: 100px;
+            transition: bottom 0.2s;
+        }
+        #rope {
+            width: 300px;
+            height: 200px;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+        #score, #speed, #jump-height {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div id="game-area">
+            <img id="player" src="https://drive.google.com/file/d/1Mgek2KHo2uxjOqgcEZCDOFv16jgRucAt/view?usp=drive_link" alt="강아지 플레이어">
+            <svg id="rope" viewBox="0 0 300 200">
+                <path id="rope-path" fill="none" stroke="red" stroke-width="2"/>
+            </svg>
+        </div>
+        <div id="score">점수: <span id="score-value">0</span></div>
+        <div id="speed">속도: <span id="speed-value">3</span></div>
+        <div id="jump-height">점프 높이: <span id="jump-height-value">0</span>px</div>
+        <button id="start-button">게임 시작</button>
+    </div>
+
+    <script>
+        const player = document.getElementById('player');
+        const ropePath = document.getElementById('rope-path');
+        const scoreValue = document.getElementById('score-value');
+        const speedValue = document.getElementById('speed-value');
+        const jumpHeightValue = document.getElementById('jump-height-value');
+        const startButton = document.getElementById('start-button');
+        const gameArea = document.getElementById('game-area');
+
+        let score = 0;
+        let isJumping = false;
+        let ropeAngle = 0;
+        let gameInterval;
+        let baseSpeed = 3;
+        let currentSpeed = baseSpeed;
+        let jumpCount = 0;
+        let currentJumpHeight = 0;
+        const MAX_JUMP_HEIGHT = 50;
+
+        function jump() {
+            if (!isJumping) {
+                isJumping = true;
+                let jumpHeight = 0;
+                const jumpInterval = setInterval(() => {
+                    if (jumpHeight < MAX_JUMP_HEIGHT) {
+                        jumpHeight += 5;
+                        player.style.bottom = jumpHeight + 'px';
+                        currentJumpHeight = jumpHeight;
+                        jumpHeightValue.textContent = currentJumpHeight;
+                    } else {
+                        clearInterval(jumpInterval);
+                        const fallInterval = setInterval(() => {
+                            if (jumpHeight > 0) {
+                                jumpHeight -= 5;
+                                player.style.bottom = jumpHeight + 'px';
+                                currentJumpHeight = jumpHeight;
+                                jumpHeightValue.textContent = currentJumpHeight;
+                            } else {
+                                clearInterval(fallInterval);
+                                isJumping = false;
+                                currentJumpHeight = 0;
+                                jumpHeightValue.textContent = currentJumpHeight;
+                            }
+                        }, 20);
+                    }
+                }, 20);
+            }
+        }
+
+        function moveRope() {
+            ropeAngle += currentSpeed;
+            if (ropeAngle >= 360) ropeAngle = 0;
+            
+            const radians = ropeAngle * Math.PI / 180;
+            const amplitude = 100;
+            const y = amplitude * Math.abs(Math.sin(radians));
+            
+            const path = `M0,200 Q150,${200 - y * 2} 300,200`;
+            ropePath.setAttribute('d', path);
+
+            checkCollision(y);
+        }
+
+        function checkCollision(ropeHeight) {
+            const playerBottom = parseInt(player.style.bottom || '0');
+
+            if (ropeHeight <= 5 && playerBottom < 5) {
+                endGame();
+            } else if (ropeHeight <= 5 && playerBottom >= 5) {
+                score++;
+                jumpCount++;
+                scoreValue.textContent = score;
+                
+                if (jumpCount % 3 === 0) {
+                    randomizeSpeed();
+                }
+                
+                if (jumpCount % 5 === 0) {
+                    baseSpeed++;
+                    currentSpeed = baseSpeed;
+                }
+                
+                updateSpeedDisplay();
+            }
+        }
+
+        function randomizeSpeed() {
+            const minSpeed = Math.max(1, baseSpeed - 2);
+            const maxSpeed = baseSpeed + 2;
+            currentSpeed = minSpeed + Math.random() * (maxSpeed - minSpeed);
+            currentSpeed = Math.round(currentSpeed * 10) / 10;
+        }
+
+        function updateSpeedDisplay() {
+            speedValue.textContent = currentSpeed.toFixed(1);
+        }
+
+        function startGame() {
+            score = 0;
+            jumpCount = 0;
+            baseSpeed = 3;
+            currentSpeed = baseSpeed;
+            scoreValue.textContent = score;
+            updateSpeedDisplay();
+            jumpHeightValue.textContent = '0';
+            startButton.disabled = true;
+            gameInterval = setInterval(moveRope, 20);
+            document.addEventListener('keydown', handleKeyPress);
+        }
+
+        function endGame() {
+            clearInterval(gameInterval);
+            alert(`게임 오버! 최종 점수: ${score}`);
+            startButton.disabled = false;
+            document.removeEventListener('keydown', handleKeyPress);
+        }
+
+        function handleKeyPress(e) {
+            if (e.code === 'Space') {
+                jump();
+            }
+        }
+
+        startButton.addEventListener('click', startGame);
+    </script>
+</body>
+</html>
