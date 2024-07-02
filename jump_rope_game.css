@@ -1,8 +1,42 @@
-#player {
-    width: 100px;
-    height: 100px;
-    position: absolute;
-    bottom: 0;
-    left: 100px;
-    transition: bottom 0.2s;
+const playerContainer = document.getElementById('player-container');
+const player = document.getElementById('player');
+// ... (기존 코드 유지)
+
+function jump() {
+    if (!isJumping) {
+        isJumping = true;
+        let jumpHeight = 0;
+        const jumpInterval = setInterval(() => {
+            if (jumpHeight < MAX_JUMP_HEIGHT) {
+                jumpHeight += 5;
+                playerContainer.style.bottom = jumpHeight + 'px';
+                currentJumpHeight = jumpHeight;
+                jumpHeightValue.textContent = currentJumpHeight;
+                
+                // 점프 시작 시 회전 애니메이션 추가
+                if (jumpHeight === 5) {
+                    player.classList.add('jumping');
+                }
+            } else {
+                clearInterval(jumpInterval);
+                const fallInterval = setInterval(() => {
+                    if (jumpHeight > 0) {
+                        jumpHeight -= 5;
+                        playerContainer.style.bottom = jumpHeight + 'px';
+                        currentJumpHeight = jumpHeight;
+                        jumpHeightValue.textContent = currentJumpHeight;
+                    } else {
+                        clearInterval(fallInterval);
+                        isJumping = false;
+                        currentJumpHeight = 0;
+                        jumpHeightValue.textContent = currentJumpHeight;
+                        // 점프 종료 시 회전 애니메이션 제거
+                        player.classList.remove('jumping');
+                    }
+                }, 20);
+            }
+        }, 20);
+    }
 }
+
+// ... (나머지 코드 유지)
